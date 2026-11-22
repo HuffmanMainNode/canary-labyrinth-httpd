@@ -157,7 +157,7 @@ def load_events(path: Path) -> List[Dict[str, Any]]:
             raise CanaryError("event log must be a regular file with one link")
         if info.st_size > MAX_EVENT_LOG_BYTES:
             raise CanaryError("event log exceeds the configured 64 MiB limit")
-        with os.fdopen(fd, "r", encoding="utf-8", closefd=False):
+        with os.fdopen(fd, "r", encoding="utf-8", closefd=False) as stream:
             events = []
             seen_ids = set()
             for line_number, line in enumerate(stream, 1):
