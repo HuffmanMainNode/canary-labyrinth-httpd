@@ -12,22 +12,65 @@
     "method",
     "status_code",
     "source_family",
+    "source_prefix",
     "destination_port"
   ],
   "properties": {
-    "schema_version": { "const": "1.0" },
-    "event_id": { "type": "string", "format": "uuid" },
-    "timestamp": { "type": "string", "format": "date-time" },
+    "schema_version": {
+      "const": "1.0"
+    },
+    "event_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
     "endpoint_id": {
       "type": "string",
-      "enum": ["admin-console", "legacy-login", "environment-config", "backup-archive", "internal-config"]
+      "enum": [
+        "admin-console",
+        "legacy-login",
+        "environment-config",
+        "backup-archive",
+        "internal-config"
+      ]
     },
     "method": {
       "type": "string",
-      "enum": ["GET", "HEAD", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
+      "enum": [
+        "GET",
+        "HEAD",
+        "POST",
+        "PUT",
+        "DELETE",
+        "PATCH",
+        "OPTIONS"
+      ]
     },
-    "status_code": { "type": "integer", "enum": [404, 405] },
-    "source_family": { "type": "string", "enum": ["ipv4", "ipv6"] },
-    "destination_port": { "type": "integer", "minimum": 1, "maximum": 65535 }
+    "status_code": {
+      "type": "integer",
+      "enum": [
+        404,
+        405
+      ]
+    },
+    "source_family": {
+      "type": "string",
+      "enum": [
+        "ipv4",
+        "ipv6"
+      ]
+    },
+    "destination_port": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535
+    },
+    "source_prefix": {
+      "type": "string",
+      "pattern": "^(?:[0-9.]+/24|[0-9a-fA-F:]+/64)$"
+    }
   }
 }
