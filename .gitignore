@@ -53,3 +53,7 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+# Local canary event data and exports
+canary-events*.jsonl
+canary-events*.stix.json
