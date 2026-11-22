@@ -1,0 +1,13 @@
+# Canary Labyrinth HTTPD
+
+- Purpose: local-first HTTP canary endpoints, minimal JSONL event records, STIX 2.1 export.
+- Entry point: `canary_httpd.py`.
+- Commands: `serve`, `validate-log`, `export-stix`.
+- Default bind: `127.0.0.1`; non-loopback requires `--allow-non-loopback`.
+- Routes are a fixed allowlist; unknown paths are not logged.
+- Events exclude source IP, raw path, query, headers, cookies, credentials, and request bodies.
+- No request body is read.
+- Event file: append-only JSONL, mode 0600, 64 MiB cap.
+- STIX: version 2.1; sensor identity + network-traffic + observed-data only.
+- No threat actor attribution, outbound scanning, proxy, arbitrary file serving, or command execution.
+- Tests: `python3 -m pip install -r requirements-test.txt && python3 -m unittest discover -v`.
