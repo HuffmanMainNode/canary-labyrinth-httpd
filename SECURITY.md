@@ -10,10 +10,10 @@ The event record stores only:
 - event UUID and UTC timestamp;
 - configured endpoint identifier;
 - HTTP method and response status;
-- source address family, not source address;
+- truncated source network prefix only (IPv4 /24 or IPv6 /64), never the full source address;
 - local destination port.
 
-The implementation does not record raw paths, query strings, request headers, cookies, authorization data, user-agent strings, or request bodies. Request bodies are not read. Unknown paths are not recorded. The HTTP handler suppresses default access/error logging to avoid accidental raw request metadata in stderr.
+The implementation does not record full source addresses, raw paths, query strings, request headers, cookies, authorization data, user-agent strings, or request bodies. Request bodies are not read. Unknown paths are not recorded. The HTTP handler suppresses default access/error logging to avoid accidental raw request metadata in stderr.
 
 The JSONL event file is opened with no-follow semantics where supported, checked as a regular single-link file owned by the current user, and set to mode `0600`. Appends are serialized and fsynced. The file is append-only by application behavior, not tamper-proof against its owner. The log has a 64 MiB limit; rotation is operator-managed.
 
