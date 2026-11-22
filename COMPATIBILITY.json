@@ -13,7 +13,7 @@
     "prototype: fixed allowlist of static HTTP canary endpoints",
     "prototype: loopback-only IPv4 binding by default; non-loopback binding requires explicit opt-in",
     "prototype: unknown paths are not recorded and configured paths return static 404/405 responses",
-    "prototype: minimal versioned JSONL events omit full source address, raw path, query, headers, cookies, credentials, and request bodies",
+    "prototype: minimal versioned JSONL events store only a truncated source prefix (/24 IPv4 or /64 IPv6) and omit full source address, raw path, query, headers, cookies, credentials, and request bodies",
     "prototype: append-only event writes with mode 0600 and a 64 MiB size limit",
     "prototype: STIX 2.1 bundle export using optional pinned stix2 library",
     "prototype: no outbound scanning, proxying, arbitrary file serving, authentication, or command execution"
@@ -57,7 +57,7 @@
     "CLI: serve, validate-log, export-stix",
     "Versioned event record schema: schemas/event.schema.json v1.0",
     "Append-only JSONL event log",
-    "STIX 2.1 bundle export containing identity, network-traffic, and observed-data objects"
+    "STIX 2.1 bundle export containing sensor identity, ipv4-addr/ipv6-addr source prefix, network-traffic, observed-data, and note objects"
   ],
   "verification": {
     "highest_evidence_tier": "TIER-2",
@@ -65,17 +65,28 @@
       {
         "claim": "Loopback HTTP canary routes, privacy boundaries, append-only JSONL handling, and event schema validation pass deterministic tests on Python 3.9 through 3.13 on Ubuntu 24.04.",
         "status": "verified",
-        "evidence": []
+        "evidence": [
+          "https://github.com/HuffmanMainNode/canary-labyrinth-httpd/actions/runs/44979166847"
+        ]
       },
       {
         "claim": "STIX 2.1 bundles generated from fixture events parse successfully with stix2 3.0.1; no actor attribution objects are emitted.",
         "status": "verified",
-        "evidence": []
+        "evidence": [
+          "https://github.com/HuffmanMainNode/canary-labyrinth-httpd/actions/runs/44979166847"
+        ]
       },
       {
         "claim": "Public exposure, non-loopback deployment, production hardening, and external operational observations.",
         "status": "unverified",
         "evidence": []
+      },
+      {
+        "claim": "The event schema and compatibility manifest validate against their declared Draft 2020-12 schemas; the CLI entry point is available.",
+        "status": "verified",
+        "evidence": [
+          "https://github.com/HuffmanMainNode/canary-labyrinth-httpd/actions/runs/44979166847"
+        ]
       }
     ]
   }
