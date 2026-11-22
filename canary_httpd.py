@@ -192,7 +192,7 @@ def load_events(path: Path) -> List[Dict[str, Any]]:
 
 def build_stix_bundle(events: Iterable[Dict[str, Any]]) -> str:
     try:
-        from stix2 import Bundle, Identity, IPv4Address, IPv6Address, NetworkTraffic, ObservedData, parse
+        from stix2 import Bundle, Identity, IPv4Address, IPv6Address, NetworkTraffic, Note, ObservedData, parse
     except ImportError as exc:
         raise CanaryError("STIX export requires the optional stix2 dependency; install requirements-stix.txt") from exc
 
@@ -232,9 +232,13 @@ def build_stix_bundle(events: Iterable[Dict[str, Any]]) -> str:
             number_observed=1,
             object_refs=[traffic.id],
             created_by_ref=identity.id,
-            description=description,
         )
-        objects.extend([source_object, traffic, observed])
+        note = Note(
+            content=description,
+            object_refs=[observed.id],
+            created_by_ref=identity.id,
+        )
+        objects.extend([source_object, traffic, observed, note])
 
     bundle = Bundle(objects=objects)
     serialized = bundle.serialize(pretty=True)
