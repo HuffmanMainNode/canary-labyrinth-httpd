@@ -38,10 +38,10 @@ Only requests to configured canary routes are recorded. Each JSONL event contain
 - UUID event identifier and UTC timestamp;
 - configured endpoint identifier;
 - HTTP method and response status;
-- source address family only (IPv4/IPv6);
+- source network prefix only (IPv4 /24 or IPv6 /64, never the full address);
 - local destination port.
 
-The event log does not contain the source IP address, raw request path, query string, headers, cookies, authorization data, or request body. The server never reads request bodies. The event file is created with mode `0600`, appended without truncation, and capped at 64 MiB. Rotation is an explicit operator task.
+The event log does not contain the full source IP address, raw request path, query string, headers, cookies, authorization data, or request body. The server never reads request bodies. The event file is created with mode `0600`, appended without truncation, and capped at 64 MiB. Rotation is an explicit operator task.
 
 Validate an event log:
 
