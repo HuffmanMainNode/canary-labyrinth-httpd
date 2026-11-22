@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:huffman:canary-labyrinth:event:1.0",
+  "title": "Canary Labyrinth HTTP Event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "event_id",
+    "timestamp",
+    "endpoint_id",
+    "method",
+    "status_code",
+    "source_family",
+    "destination_port"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "event_id": { "type": "string", "format": "uuid" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "endpoint_id": {
+      "type": "string",
+      "enum": ["admin-console", "legacy-login", "environment-config", "backup-archive", "internal-config"]
+    },
+    "method": {
+      "type": "string",
+      "enum": ["GET", "HEAD", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
+    },
+    "status_code": { "type": "integer", "enum": [404, 405] },
+    "source_family": { "type": "string", "enum": ["ipv4", "ipv6"] },
+    "destination_port": { "type": "integer", "minimum": 1, "maximum": 65535 }
+  }
+}
