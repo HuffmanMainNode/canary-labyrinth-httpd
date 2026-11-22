@@ -13,7 +13,7 @@
     "prototype: fixed allowlist of static HTTP canary endpoints",
     "prototype: loopback-only IPv4 binding by default; non-loopback binding requires explicit opt-in",
     "prototype: unknown paths are not recorded and configured paths return static 404/405 responses",
-    "prototype: minimal versioned JSONL events omit source address, raw path, query, headers, cookies, credentials, and request bodies",
+    "prototype: minimal versioned JSONL events omit full source address, raw path, query, headers, cookies, credentials, and request bodies",
     "prototype: append-only event writes with mode 0600 and a 64 MiB size limit",
     "prototype: STIX 2.1 bundle export using optional pinned stix2 library",
     "prototype: no outbound scanning, proxying, arbitrary file serving, authentication, or command execution"
