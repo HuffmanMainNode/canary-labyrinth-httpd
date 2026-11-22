@@ -8,50 +8,72 @@
     "url": "https://github.com/HuffmanMainNode/canary-labyrinth-httpd"
   },
   "contract_version": "1.0",
-  "lifecycle_state": "planned",
+  "lifecycle_state": "prototype",
   "capabilities": [
-    "planned controlled HTTP canary endpoints",
-    "planned local ingress event observation",
-    "planned structured event recording",
-    "planned STIX 2.1 export"
+    "prototype: fixed allowlist of static HTTP canary endpoints",
+    "prototype: loopback-only IPv4 binding by default; non-loopback binding requires explicit opt-in",
+    "prototype: unknown paths are not recorded and configured paths return static 404/405 responses",
+    "prototype: minimal versioned JSONL events omit source address, raw path, query, headers, cookies, credentials, and request bodies",
+    "prototype: append-only event writes with mode 0600 and a 64 MiB size limit",
+    "prototype: STIX 2.1 bundle export using optional pinned stix2 library",
+    "prototype: no outbound scanning, proxying, arbitrary file serving, authentication, or command execution"
   ],
   "negative_scope": [
     "remote exploitation",
     "outbound scanning",
     "brute-force routines",
     "counter-attack and retaliation",
+    "credential and cookie collection",
+    "request-body and arbitrary-header capture",
+    "proxying and arbitrary file serving",
     "silent privileged mutation",
     "fabricated or simulated live operational evidence"
   ],
   "platforms": [
     {
-      "target": "POSIX-compatible local host",
+      "target": "Ubuntu 24.04 CI with Python 3.9 through 3.13",
+      "status": "verified",
+      "notes": "Deterministic loopback HTTP, JSONL, privacy, schema, and STIX parsing tests run in CI."
+    },
+    {
+      "target": "Other POSIX hosts and non-loopback deployments",
       "status": "planned",
-      "notes": "Target only; daemon implementation and platform behavior have not been verified."
+      "notes": "Not yet tested outside the recorded Ubuntu CI environment; wider binding requires explicit operator opt-in."
     }
   ],
   "dependencies": {
     "build": [
-      "C compiler toolchain (target; standard and version not yet selected)"
+      "Python 3.9 or later"
     ],
     "runtime": [
-      "Platform C runtime and documented system networking interfaces (target; not yet implemented)"
+      "Python standard library for HTTP service and JSONL event capture"
     ],
     "optional": [
-      "STIX 2.1 schema validation tooling for development and CI",
-      "Local log rotation or storage adapter after design review"
+      "stix2==3.0.1 for STIX 2.1 export",
+      "jsonschema==4.23.0 for development and CI validation"
     ]
   },
   "interfaces": [
-    "Versioned canary configuration (not yet defined)",
-    "Versioned event record schema (not yet defined)",
-    "STIX 2.1 bundle export (planned; not implemented)"
+    "CLI: serve, validate-log, export-stix",
+    "Versioned event record schema: schemas/event.schema.json v1.0",
+    "Append-only JSONL event log",
+    "STIX 2.1 bundle export containing identity, network-traffic, and observed-data objects"
   ],
   "verification": {
-    "highest_evidence_tier": "none",
+    "highest_evidence_tier": "TIER-2",
     "claims": [
       {
-        "claim": "Executable behavior and platform compatibility.",
+        "claim": "Loopback HTTP canary routes, privacy boundaries, append-only JSONL handling, and event schema validation pass deterministic tests on Python 3.9 through 3.13 on Ubuntu 24.04.",
+        "status": "verified",
+        "evidence": []
+      },
+      {
+        "claim": "STIX 2.1 bundles generated from fixture events parse successfully with stix2 3.0.1; no actor attribution objects are emitted.",
+        "status": "verified",
+        "evidence": []
+      },
+      {
+        "claim": "Public exposure, non-loopback deployment, production hardening, and external operational observations.",
         "status": "unverified",
         "evidence": []
       }
