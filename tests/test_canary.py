@@ -109,6 +109,7 @@ class CanaryHTTPTests(unittest.TestCase):
         self.assertIn("ipv4-addr", types)
         self.assertIn("network-traffic", types)
         self.assertIn("observed-data", types)
+        self.assertIn("note", types)
         self.assertNotIn("threat-actor", types)
         self.assertNotIn("indicator", types)
 
