@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0",
+  "project": "CAS-XDP",
+  "repository": {
+    "owner": "HuffmanMainNode",
+    "name": "canary-labyrinth-httpd",
+    "visibility": "public",
+    "url": "https://github.com/HuffmanMainNode/canary-labyrinth-httpd"
+  },
+  "contract_version": "1.0",
+  "lifecycle_state": "planned",
+  "capabilities": [
+    "planned controlled HTTP canary endpoints",
+    "planned local ingress event observation",
+    "planned structured event recording",
+    "planned STIX 2.1 export"
+  ],
+  "negative_scope": [
+    "remote exploitation",
+    "outbound scanning",
+    "brute-force routines",
+    "counter-attack and retaliation",
+    "silent privileged mutation",
+    "fabricated or simulated live operational evidence"
+  ],
+  "platforms": [
+    {
+      "target": "POSIX-compatible local host",
+      "status": "planned",
+      "notes": "Target only; daemon implementation and platform behavior have not been verified."
+    }
+  ],
+  "dependencies": {
+    "build": [
+      "C compiler toolchain (target; standard and version not yet selected)"
+    ],
+    "runtime": [
+      "Platform C runtime and documented system networking interfaces (target; not yet implemented)"
+    ],
+    "optional": [
+      "STIX 2.1 schema validation tooling for development and CI",
+      "Local log rotation or storage adapter after design review"
+    ]
+  },
+  "interfaces": [
+    "Versioned canary configuration (not yet defined)",
+    "Versioned event record schema (not yet defined)",
+    "STIX 2.1 bundle export (planned; not implemented)"
+  ],
+  "verification": {
+    "highest_evidence_tier": "none",
+    "claims": [
+      {
+        "claim": "Executable behavior and platform compatibility.",
+        "status": "unverified",
+        "evidence": []
+      }
+    ]
+  }
+}
