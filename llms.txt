@@ -5,7 +5,7 @@
 - Commands: `serve`, `validate-log`, `export-stix`.
 - Default bind: `127.0.0.1`; non-loopback requires `--allow-non-loopback`.
 - Routes are a fixed allowlist; unknown paths are not logged.
-- Events exclude source IP, raw path, query, headers, cookies, credentials, and request bodies.
+- Events store only a truncated source prefix (/24 IPv4 or /64 IPv6); they exclude the full source IP, raw path, query, headers, cookies, credentials, and request bodies.
 - No request body is read.
 - Event file: append-only JSONL, mode 0600, 64 MiB cap.
 - STIX: version 2.1; sensor identity + network-traffic + observed-data only.
