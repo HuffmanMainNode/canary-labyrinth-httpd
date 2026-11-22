@@ -70,3 +70,7 @@ python3 -m unittest discover -v
 CI validates the shared contract, compatibility manifest, event schema, HTTP behavior, privacy boundaries, append-only event handling, and STIX 2.1 parsing.
 
 See [SECURITY.md](SECURITY.md) and [CONTRACT.md](CONTRACT.md).
+
+## Prototype release record
+
+See [PROTOTYPE-RELEASE.md](PROTOTYPE-RELEASE.md) for the verified source commit, evidence ceiling, supported prototype scope, limitations, and next milestone. This document stages a prototype handoff; it does not create a GitHub Release or claim production readiness.
