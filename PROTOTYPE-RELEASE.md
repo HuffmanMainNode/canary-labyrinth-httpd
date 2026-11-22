@@ -23,8 +23,13 @@ A local-first HTTP canary daemon with fixed decoy endpoints, privacy-minimized J
 ## Verify locally
 
 ```sh
+# Terminal 1: start the loopback-only canary.
 python3 canary_httpd.py serve --bind 127.0.0.1 --port 8080 --event-log ./canary-events.jsonl
+
+# Terminal 2, after generating test traffic: validate the event log.
 python3 canary_httpd.py validate-log --event-log ./canary-events.jsonl
+
+# Run the deterministic test suite.
 python3 -m pip install -r requirements-test.txt
 python3 -m unittest discover -v
 ```
