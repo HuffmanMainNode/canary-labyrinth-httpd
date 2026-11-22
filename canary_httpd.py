@@ -81,9 +81,9 @@ def validate_event(event: Any) -> Dict[str, Any]:
         raise CanaryError("timestamp must be an ISO 8601 date-time")
     if parsed_time.tzinfo is None or parsed_time.utcoffset().total_seconds() != 0:
         raise CanaryError("timestamp must be UTC and include a timezone")
-    if event["endpoint_id"] not in set(ROUTES.values()):
+    if not isinstance(event["endpoint_id"], str) or event["endpoint_id"] not in set(ROUTES.values()):
         raise CanaryError("endpoint_id is not in the configured route allowlist")
-    if event["method"] not in ALLOWED_METHODS:
+    if not isinstance(event["method"], str) or event["method"] not in ALLOWED_METHODS:
         raise CanaryError("method is not supported by the event schema")
     if isinstance(event["status_code"], bool) or event["status_code"] not in (404, 405):
         raise CanaryError("status_code must be 404 or 405")
@@ -155,7 +155,9 @@ def load_events(path: Path) -> List[Dict[str, Any]]:
         info = os.fstat(fd)
         if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1:
             raise CanaryError("event log must be a regular file with one link")
-        with os.fdopen(fd, "r", encoding="utf-8", closefd=False) as stream:
+        if info.st_size > MAX_EVENT_LOG_BYTES:
+            raise CanaryError("event log exceeds the configured 64 MiB limit")
+        with os.fdopen(fd, "r", encoding="utf-8", closefd=False):
             events = []
             seen_ids = set()
             for line_number, line in enumerate(stream, 1):
@@ -231,10 +233,22 @@ def write_new_private_file(path: Path, content: str) -> None:
     except OSError as exc:
         raise CanaryError("output must be a new file and must not be a symlink: " + str(exc))
     try:
-        os.write(fd, content.encode("utf-8"))
+        view = memoryview(content.encode("utf-8"))
+        while view:
+            written = os.write(fd, view)
+            if written <= 0:
+                raise CanaryError("short write while creating STIX export")
+            view = view[written:]
         os.fsync(fd)
         os.fchmod(fd, 0o600)
-    finally:
+    except Exception:
+        os.close(fd)
+        try:
+            os.unlink(path)
+        except OSError:
+            pass
+        raise
+    else:
         os.close(fd)
 
 
