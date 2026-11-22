@@ -63,6 +63,7 @@ def validate_event(event: Any) -> Dict[str, Any]:
         "method",
         "status_code",
         "source_family",
+        "source_prefix",
         "destination_port",
     }
     if not isinstance(event, dict) or set(event) != required:
@@ -89,6 +90,18 @@ def validate_event(event: Any) -> Dict[str, Any]:
         raise CanaryError("status_code must be 404 or 405")
     if event["source_family"] not in ("ipv4", "ipv6"):
         raise CanaryError("source_family must be ipv4 or ipv6")
+    if not isinstance(event["source_prefix"], str):
+        raise CanaryError("source_prefix must be a network prefix string")
+    try:
+        source_network = ipaddress.ip_network(event["source_prefix"], strict=True)
+    except ValueError:
+        raise CanaryError("source_prefix must be a canonical network prefix")
+    expected_version = 4 if event["source_family"] == "ipv4" else 6
+    expected_prefix_length = 24 if expected_version == 4 else 64
+    if source_network.version != expected_version or source_network.prefixlen != expected_prefix_length:
+        raise CanaryError("source_prefix must be IPv4 /24 or IPv6 /64 matching source_family")
+    if str(source_network) != event["source_prefix"]:
+        raise CanaryError("source_prefix must use canonical network notation")
     port = event["destination_port"]
     if isinstance(port, bool) or not isinstance(port, int) or not 1 <= port <= 65535:
         raise CanaryError("destination_port must be an integer from 1 to 65535")
@@ -179,7 +192,7 @@ def load_events(path: Path) -> List[Dict[str, Any]]:
 
 def build_stix_bundle(events: Iterable[Dict[str, Any]]) -> str:
     try:
-        from stix2 import Bundle, Identity, NetworkTraffic, ObservedData, parse
+        from stix2 import Bundle, Identity, IPv4Address, IPv6Address, NetworkTraffic, ObservedData, parse
     except ImportError as exc:
         raise CanaryError("STIX export requires the optional stix2 dependency; install requirements-stix.txt") from exc
 
@@ -192,7 +205,13 @@ def build_stix_bundle(events: Iterable[Dict[str, Any]]) -> str:
     for raw_event in events:
         event = validate_event(raw_event)
         observed_at = datetime.fromisoformat(event["timestamp"].replace("Z", "+00:00"))
+        source_object = (
+            IPv4Address(value=event["source_prefix"])
+            if event["source_family"] == "ipv4"
+            else IPv6Address(value=event["source_prefix"])
+        )
         traffic = NetworkTraffic(
+            src_ref=source_object.id,
             protocols=[event["source_family"], "tcp", "http"],
             dst_port=event["destination_port"],
         )
@@ -215,7 +234,7 @@ def build_stix_bundle(events: Iterable[Dict[str, Any]]) -> str:
             created_by_ref=identity.id,
             description=description,
         )
-        objects.extend([traffic, observed])
+        objects.extend([source_object, traffic, observed])
 
     bundle = Bundle(objects=objects)
     serialized = bundle.serialize(pretty=True)
@@ -321,6 +340,10 @@ def make_handler(store: EventStore):
                     "method": method,
                     "status_code": status,
                     "source_family": "ipv4" if source.version == 4 else "ipv6",
+                    "source_prefix": str(ipaddress.ip_network(
+                        str(source) + ("/24" if source.version == 4 else "/64"),
+                        strict=False,
+                    )),
                     "destination_port": int(self.server.server_port),
                 }
                 store.append(event)
