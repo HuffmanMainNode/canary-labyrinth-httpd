@@ -52,6 +52,7 @@ class CanaryHTTPTests(unittest.TestCase):
         self.assertEqual(event["method"], "GET")
         self.assertEqual(event["status_code"], 404)
         self.assertNotIn("source_address", event)
+        self.assertEqual(event["source_prefix"], "127.0.0.0/24")
         self.assertNotIn("query", event)
         raw = self.log_path.read_text(encoding="utf-8")
         self.assertNotIn("secret", raw)
@@ -105,6 +106,7 @@ class CanaryHTTPTests(unittest.TestCase):
         self.assertEqual(bundle.type, "bundle")
         types = [obj.type for obj in bundle.objects]
         self.assertIn("identity", types)
+        self.assertIn("ipv4-addr", types)
         self.assertIn("network-traffic", types)
         self.assertIn("observed-data", types)
         self.assertNotIn("threat-actor", types)
